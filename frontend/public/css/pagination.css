@@ -1,0 +1,26 @@
+
+
+.activePage {
+    background: #444;
+    color: #fff;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 50%;
+}
+
+.inActivePage {
+    background: #878787;
+    cursor: pointer;
+    color: #fff;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 50%;
+}
+
+.paginationBtn {
+    background: #878787;
+    color: #fff;
+    font-weight: 600;
+    padding: 5px 9px;
+    border-radius: 50%;
+}

@@ -2,13 +2,12 @@ const { responseReturn } = require("../utiles/response");
 const formidable = require('formidable');
 const validator = require('validator');
 const userModel = require('../models/userModel');
+const adminModel = require('../models/adminModel');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const bcrpty = require('bcrypt');
 const { createToken } = require("../utiles/tokenCreate");
 const cloudinary = require('cloudinary').v2
-
-
 
 
 
@@ -27,6 +26,59 @@ const transporter = nodemailer.createTransport({
 
 
 class authController {
+
+    // admin_login
+    admin_login = async (req, res) => {
+        const { email, password } = req.body;
+        const error = {}
+
+        if (email && !validator.isEmail(email)) {
+            error.email = "Please provide your valid email"
+        }
+        if (!email) {
+            error.email = "Please provide valid email"
+        }
+        if (!password) {
+            error.password = "Please provide your password"
+        }
+
+        if (Object.keys(error).length > 0) {
+            responseReturn(res, 400, { error: error })
+        } else {
+            try {
+
+                const getAdmin = await adminModel.findOne({ email }).select("+password");
+                if (!getAdmin) {
+                    responseReturn(res, 400, { error: "Email dose not exists" })
+                } else {
+                    const matchPassword = await bcrpty.compare(password, getAdmin.password)
+
+                    if (!matchPassword) {
+                        responseReturn(res, 400, { error: "Password dose not match" })
+                    } else {
+                        const token = await createToken({
+                            id: getAdmin._id,
+                            name: getAdmin.adminName,
+                            role: getAdmin.role,
+                            image: getAdmin.image
+                        });
+
+                        res.cookie('blog_token', token, {
+                            expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+                        })
+                        responseReturn(res, 201, { message: 'Login successfull', token })
+
+                    }
+
+                }
+
+            } catch (error) {
+                responseReturn(res, 500, { error: "Internal server error" })
+            }
+        }
+
+    }
+
 
     // user register
     register = async (req, res) => {
@@ -168,6 +220,67 @@ class authController {
                         responseReturn(res, 404, { error: "Image upload failed" })
                     }
 
+                }
+
+            } catch (error) {
+                responseReturn(res, 500, { error: error.message })
+            }
+        }
+
+    }
+
+
+    // user_login
+    user_login = async (req, res) => {
+        const { email, password } = req.body;
+
+        const error = {
+
+        }
+
+        if (email && !validator.isEmail(email)) {
+            error.email = "Please provide your valid email"
+        }
+        if (!email) {
+            error.email = "Please provide your email";
+        }
+        if (!password) {
+            error.password = "Please provide your password"
+        }
+
+        if (Object.keys(error).length > 0) {
+            return res.status(400).json({ error: error.message })
+        } else {
+            try {
+                const getUser = await userModel.findOne({ email }).select("+password");
+
+                if (getUser) {
+                    const matchPassword = await bcrpty.compare(password, getUser.password);
+
+                    if (matchPassword) {
+
+                        const token = await createToken({
+                            id: getUser._id,
+                            email: getUser.email,
+                            name: getUser.userName,
+                            image: getUser.image,
+                            role: getUser.role,
+                            loginMethod: getUser.loginMethod,
+                            accessStatus: getUser.accessStatus,
+                            createdAt: getUser.createdAt
+                        });
+
+                        res.cookie('blog_token', token, {
+                            expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+                        })
+                        responseReturn(res, 201, { message: 'Your Login successfull', token })
+
+                    } else {
+                        responseReturn(res, 400, { error: "Password does not match" })
+                    }
+
+                } else {
+                    responseReturn(res, 400, { error: "Email does not exists" })
                 }
 
             } catch (error) {

@@ -19,7 +19,10 @@ app.use(cookieParser());
 
 
 // import router
-app.use('/api', require('./routes/authRoutes'))
+app.use('/api', require('./routes/authRoutes'));
+app.use('/api', require('./routes/Dashborad/categoryRouter'));
+
+
 
 const port = process.env.PORT;
 dbConnect();
