@@ -58,10 +58,13 @@ const AddCategory = () => {
     }
 
     useEffect(() => {
-        if (errorMessage) {
-            toast.error(errorMessage)
-            dispatch(messageClear())
+        if (!errorMessage.categoryName && !errorMessage.categoryDes) {
+            if (errorMessage) {
+                toast.error(errorMessage)
+                dispatch(messageClear())
+            }
         }
+
         if (successMessage) {
             toast.success(successMessage)
             dispatch(messageClear())
@@ -79,7 +82,7 @@ const AddCategory = () => {
     return (
         <div className='all-category'>
             <Helmet>
-                <title>Category add</title>
+                <title>{cateSlug ? "Category add" : "Category edit"}</title>
             </Helmet>
             <div className="added">
                 <div className="title-show-article">
@@ -90,12 +93,13 @@ const AddCategory = () => {
                     <div className="form-group">
                         <label htmlFor="category_name">Category name</label>
                         <input onChange={inputHendle} value={state.categoryName} type="text" name='categoryName' className="form-control" placeholder='Category name' id='category_name' />
-                        {/* <p className='error'>{categoryError? categoryError.categoryName : ""}</p> */}
+                        <p style={{ color: "red", fontSize: "14px", padding: "2px" }}>{errorMessage ? errorMessage.categoryName : ""}</p>
+
                     </div>
                     <div className="form-group">
                         <label htmlFor="category_des">Category description</label>
                         <textarea onChange={inputHendle} value={state.categoryDes} name='categoryDes' type="text" className="form-control" placeholder='Category description' id='category_des' />
-                        {/* <p className='error'>{categoryError? categoryError.categoryDes : ""}</p> */}
+                        <p style={{ color: "red", fontSize: "14px", padding: "2px" }}>{errorMessage ? errorMessage.categoryDes : ""}</p>
                     </div>
                     <div className="form-group">
                         {

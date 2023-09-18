@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { delete_category, get_all_category, messageClear } from '../../store/Reducers/categoryReducer';
 import Pagination from '../home/Pagination';
 
+
 const AllCategory = () => {
 
     const dispatch = useDispatch();
@@ -19,6 +20,7 @@ const AllCategory = () => {
     const [searchValue, setSearchValue] = useState('');
     const [currentPage, setCurrentPage] = useState(1)
     const [parPage, setParPage] = useState(12)
+
 
     useEffect(() => {
         const obj = {

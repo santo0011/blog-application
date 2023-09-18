@@ -17,7 +17,6 @@ import AllCategory from './components/dashboard/AllCategory';
 import AddCategory from './components/dashboard/AddCategory';
 import AllTag from './components/dashboard/AllTag';
 import AddTag from './components/dashboard/AddTag';
-import EditTag from './components/dashboard/EditTag';
 import AllSubAdmin from './components/dashboard/AllSubAdmin';
 import AllUser from './components/dashboard/AllUser';
 import SubadminProfile from './components/dashboard/SubadminProfile';
@@ -26,6 +25,7 @@ import ArticleAdd from './components/dashboard/ArticleAdd';
 import ProtectRoute from './components/auth/ProtectRoute';
 import { useDispatch } from 'react-redux';
 import { get_all_category } from './store/Reducers/categoryReducer';
+import { get_tag } from './store/Reducers/tagReducer';
 
 
 const App = () => {
@@ -40,6 +40,7 @@ const App = () => {
     };
 
     dispatch(get_all_category(obj));
+    dispatch(get_tag(obj));
   }, [dispatch]);
 
   return (
@@ -71,7 +72,7 @@ const App = () => {
 
             <Route path='all-tag/:currentPage?' element={<AllTag />} />
             <Route path='add-tag' element={<AddTag />} />
-            <Route path='tag/edit/:tagSlug' element={<EditTag />} />
+            <Route path='tag/edit/:tagSlug' element={<AddTag />} />
 
             <Route path='all-sub-admin/:currentPage?' element={<AllSubAdmin />} />
             <Route path='all-user/:currentPage?' element={<AllUser />} />

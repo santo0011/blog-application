@@ -12,6 +12,7 @@ const ArticleAdd = () => {
     const loader = false;
 
     const { allCategory } = useSelector(state => state.category);
+    const { allTag } = useSelector(state => state.tag);
 
     const [text, setText] = useState('');
     const editor = useRef();
@@ -110,7 +111,11 @@ const ArticleAdd = () => {
                         <label htmlFor="tag">Tag</label>
                         <select className='form-control' name="tag" id="tag">
                             <option value="sdas">--select article tag--</option>
-
+                            {
+                                allTag.length > 0 ? allTag?.map((c, i) => {
+                                    return <option key={i} value={c.tagSlug}>{c.tagName}</option>
+                                }) : ''
+                            }
                         </select>
 
                     </div>
