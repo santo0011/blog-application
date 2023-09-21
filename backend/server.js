@@ -21,6 +21,7 @@ app.use(cookieParser());
 // import router
 app.use('/api', require('./routes/authRoutes'));
 app.use('/api', require('./routes/Dashborad/categoryRouter'));
+app.use('/api', require('./routes/Dashborad/articalRoutes'));
 
 
 

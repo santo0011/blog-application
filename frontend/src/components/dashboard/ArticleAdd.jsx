@@ -4,18 +4,21 @@ import { Link } from 'react-router-dom';
 import { BsCardImage } from "react-icons/bs";
 import JoditEditor from "jodit-react";
 import toast from "react-hot-toast";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { add_articale } from '../../store/Reducers/articleReducer';
 
 
 const ArticleAdd = () => {
 
     const loader = false;
+    const dispatch = useDispatch();
 
     const { allCategory } = useSelector(state => state.category);
     const { allTag } = useSelector(state => state.tag);
 
     const [text, setText] = useState('');
     const editor = useRef();
+
 
     const [state, setState] = useState({
         title: '',
@@ -24,16 +27,27 @@ const ArticleAdd = () => {
         image: '',
     });
 
+
     const [slug, setSlug] = useState('');
     const [imageShow, setImage] = useState('')
     const [updateBtn, setUpdateBtn] = useState(false);
 
 
+    const inputHendle = (e) => {
+        setState({
+            ...state,
+            [e.target.name]: e.target.value
+        })
+    }
+
     const titleHendler = (e) => {
         setState({
             ...state,
             title: e.target.value
-        })
+        });
+
+        const createSlug = e.target.value.trim().split(' ').join('-')
+        setSlug(createSlug)
     }
 
 
@@ -42,10 +56,6 @@ const ArticleAdd = () => {
         setUpdateBtn(true)
     }
 
-
-    const handleContentChange = (newContent) => {
-        setText(newContent);
-    };
 
     // imageHendle
     const imageHendle = (e) => {
@@ -60,10 +70,22 @@ const ArticleAdd = () => {
 
     }
 
+
+    // add form data
     const add = (e) => {
         e.preventDefault();
+        const { title, image, category, tag } = state;
 
-        console.log(text)
+        const formData = new FormData();
+
+        formData.append('title', title);
+        formData.append('image', image);
+        formData.append('category', category);
+        formData.append('tag', tag);
+        formData.append('slug', slug);
+        formData.append('text', text);
+
+        dispatch(add_articale(formData))
 
     }
 
@@ -97,10 +119,10 @@ const ArticleAdd = () => {
 
                     <div className="form-group">
                         <label htmlFor="category">Category</label>
-                        <select className='form-control' name="category" id="category">
+                        <select onChange={inputHendle} value={state.category} className='form-control' name="category" id="category">
                             <option value="">--select article category--</option>
                             {
-                                allCategory.length > 0 ? allCategory?.map((c, i) => {
+                                allCategory?.length > 0 ? allCategory?.map((c, i) => {
                                     return <option key={i} value={c.categorySlug}>{c.categoryName}</option>
                                 }) : ''
                             }
@@ -109,10 +131,10 @@ const ArticleAdd = () => {
                     </div>
                     <div className="form-group">
                         <label htmlFor="tag">Tag</label>
-                        <select className='form-control' name="tag" id="tag">
+                        <select onChange={inputHendle} value={state.tag} className='form-control' name="tag" id="tag">
                             <option value="sdas">--select article tag--</option>
                             {
-                                allTag.length > 0 ? allTag?.map((c, i) => {
+                                allTag?.length > 0 ? allTag?.map((c, i) => {
                                     return <option key={i} value={c.tagSlug}>{c.tagName}</option>
                                 }) : ''
                             }

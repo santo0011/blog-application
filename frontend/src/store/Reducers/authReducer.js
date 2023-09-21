@@ -150,6 +150,5 @@ export const authReducer = createSlice({
 });
 
 
-
 export const { messageClear } = authReducer.actions;
 export default authReducer.reducer;
