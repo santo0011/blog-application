@@ -65,7 +65,7 @@ const App = () => {
             <Route path='' element={<DashboradIndex />} />
             <Route path='all-article/:currentPage?' element={<DashboradArticle />} />
             <Route path='article-add' element={<ArticleAdd />} />
-            <Route path='article/edit/:articleSlug' element={<ArticleEdit />} />
+            <Route path='article/edit/:articleSlug' element={<ArticleAdd />} />
             <Route path='all-category/:currentPage?' element={<AllCategory />} />
             <Route path='add-category' element={<AddCategory />} />
             <Route path='category/edit/:cateSlug' element={<AddCategory />} />

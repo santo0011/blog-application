@@ -87,7 +87,7 @@ const AllCategory = () => {
                         <Pagination
                             pageNumber={currentPage}
                             setPageNumber={setCurrentPage}
-                            totalItem={50}
+                            totalItem={categoryCount}
                             parPage={parPage}
                             showItem={Math.floor(categoryCount / parPage)}
                         /> : ''

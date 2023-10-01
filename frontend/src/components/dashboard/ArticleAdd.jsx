@@ -1,20 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Helmet from 'react-helmet';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { BsCardImage } from "react-icons/bs";
 import JoditEditor from "jodit-react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from 'react-redux';
-import { add_articale } from '../../store/Reducers/articleReducer';
+import { add_articale, article_edit, article_update, messageClear } from '../../store/Reducers/articleReducer';
 
 
 const ArticleAdd = () => {
 
-    const loader = false;
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const { articleSlug } = useParams();
+
 
     const { allCategory } = useSelector(state => state.category);
     const { allTag } = useSelector(state => state.tag);
+    const { loader, errorMessage, successMessage, editArticle } = useSelector(state => state.article);
 
     const [text, setText] = useState('');
     const editor = useRef();
@@ -28,8 +32,10 @@ const ArticleAdd = () => {
     });
 
 
+
     const [slug, setSlug] = useState('');
-    const [imageShow, setImage] = useState('')
+    const [imageShow, setImage] = useState('');
+    const [oldImage, setOldImage] = useState('');
     const [updateBtn, setUpdateBtn] = useState(false);
 
 
@@ -80,18 +86,70 @@ const ArticleAdd = () => {
 
         formData.append('title', title);
         formData.append('image', image);
+        formData.append('oldImage', oldImage);
         formData.append('category', category);
         formData.append('tag', tag);
         formData.append('slug', slug);
         formData.append('text', text);
+        formData.append('articleId', editArticle ? editArticle._id : "");
 
-        dispatch(add_articale(formData))
-
+        if (!articleSlug) {
+            dispatch(add_articale(formData))
+        } else {
+            dispatch(article_update(formData))
+        }
     }
 
     const config = {
         readonly: false
     }
+
+
+    useEffect(() => {
+        if (errorMessage) {
+            toast.error(errorMessage)
+            dispatch(messageClear())
+        }
+
+        if (successMessage) {
+            toast.success(successMessage)
+            dispatch(messageClear())
+            navigate('/dashboard/all-article', { replace: true })
+        }
+    }, [errorMessage, successMessage])
+
+
+    // article_edit
+    useEffect(() => {
+        if (articleSlug) {
+            dispatch(article_edit(articleSlug))
+        }
+    }, [articleSlug])
+
+    // article_edit
+    useEffect(() => {
+        if (articleSlug) {
+            setState({
+                title: editArticle.title,
+                category: editArticle.category,
+                tag: editArticle.tag,
+            });
+
+            setOldImage(editArticle.image)
+            setImage(editArticle.image)
+            setSlug(editArticle.slug)
+            setText(editArticle.articleText)
+        } else {
+            setState({
+                title: "",
+                category: "",
+                tag: ""
+            });
+            setSlug("")
+            setText("")
+        }
+    }, [articleSlug, editArticle])
+
 
     return (
         <div className='add-article'>
@@ -99,16 +157,15 @@ const ArticleAdd = () => {
                 <title>Article add</title>
             </Helmet>
 
-
             <div className="add">
                 <div className="title-show-article">
-                    <h2>Add Article</h2>
+                    <h2>{articleSlug ? "Edit Article" : "Add Article"}</h2>
                     <Link className='btn' to="/dashboard/all-article">All Article</Link>
                 </div>
                 <form onSubmit={add}>
                     <div className="form-group">
                         <label htmlFor="title">Article title</label>
-                        <input onChange={titleHendler} value={state.text} type="text" name='title' placeholder='article title' className="form-control" id='title' />
+                        <input onChange={titleHendler} value={state.title} type="text" name='title' placeholder='article title' className="form-control" id='title' />
 
                     </div>
                     <div className="form-group">
@@ -178,7 +235,7 @@ const ArticleAdd = () => {
                                     <div className="spinner2"></div>
                                     <div className="spinner3"></div>
                                 </div>
-                            </button> : <button className="btn btn-block">Add Article</button>
+                            </button> : <button className="btn btn-block">{articleSlug ? "Edit Article" : "Add Article"}</button>
 
                         }
                     </div>
