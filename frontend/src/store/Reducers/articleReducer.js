@@ -107,11 +107,16 @@ export const articleReducer = createSlice({
         [article_edit.fulfilled]: (state, { payload }) => {
             state.editArticle = payload.editArticle
         },
+        [article_update.pending]: (state, { payload }) => {
+            state.loader = true
+        },
         [article_update.rejected]: (state, { payload }) => {
             state.errorMessage = payload.error
+            state.loader = false
         },
         [article_update.fulfilled]: (state, { payload }) => {
             state.successMessage = payload.message
+            state.loader = false
         },
         [delete_article.rejected]: (state, { payload }) => {
             state.errorMessage = payload.error

@@ -9,8 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { delete_article, get_all_article, messageClear } from '../../store/Reducers/articleReducer';
 import Pagination from '../home/Pagination';
 import { base_url } from '../../api/api';
-
-// import htmlToText from "react-html-parser";
+import htmlToText from "react-html-parser";
 
 
 const DashboradArticle = () => {
@@ -83,14 +82,14 @@ const DashboradArticle = () => {
                                 <div className="article">
                                     <img src={art.image} alt="img" />
                                     <Link to={`/artical/details/${art.slug}`}>{(art.title.slice(0, 30))}</Link>
-
-                                    <p style={{ textAlign: "justify" }}>There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum. </p>
+                                    <p>{htmlToText(art.articleText.slice(0, 50))}</p>
                                     <div className="action">
                                         <span>
                                             <Link to={`/dashboard/article/edit/${art.slug}`}><MdEdit /></Link>
                                         </span>
                                         <span>
-                                            <Link to={`/artical/details/${art.slug}`}><FaRegEye /></Link>
+                                            {/* <Link to={`/artical/details/${art.slug}`}><FaRegEye /></Link> */}
+                                            <Link><FaRegEye /></Link>
                                         </span>
                                         <span onClick={() => dispatch(delete_article(art._id))}><MdDelete /></span>
                                     </div>
