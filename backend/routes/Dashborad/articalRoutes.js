@@ -14,5 +14,4 @@ router.post('/update-artical', admin_middleware, articalController.update_artica
 router.delete('/delete-artical/:articleId', admin_middleware, articalController.delete_artical);
 
 
-
 module.exports = router;

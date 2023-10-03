@@ -51,17 +51,14 @@ class categoryController {
             if (searchValue) {
                 const categorys = await categoryModel.find({ categoryName: { $regex: searchValue, $options: 'i' } }).sort({ createdAt: -1 });
                 const categoryCount = await categoryModel.find({}).countDocuments();
-
                 responseReturn(res, 200, {
                     allCategory: categorys,
-                    categoryCount,
-                    parPage
-                })
+                    categoryCount
+                });
 
             } else {
                 const categorys = await categoryModel.find({}).skip(skipPage).limit(parPage).sort({ createdAt: -1 });
                 const categoryCount = await categoryModel.find({}).countDocuments();
-
                 responseReturn(res, 200, {
                     allCategory: categorys,
                     categoryCount
@@ -164,11 +161,9 @@ class categoryController {
             if (searchValue) {
                 const tags = await tagModel.find({ tagName: { $regex: searchValue, $options: 'i' } }).sort({ createdAt: -1 });
                 const tagCount = await tagModel.find({}).countDocuments();
-
                 responseReturn(res, 200, {
                     allTag: tags,
-                    tagCount,
-                    parPage
+                    tagCount
                 });
 
             } else {

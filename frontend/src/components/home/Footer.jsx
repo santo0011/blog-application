@@ -2,13 +2,19 @@ import React, { useEffect } from 'react';
 import { Link } from "react-router-dom";
 import { FaChevronRight } from "react-icons/fa";
 import { useSelector, useDispatch } from 'react-redux';
+import { home_tag_category_get, old_react_article } from '../../store/Reducers/homeReducer';
+import moment from 'moment';
+
 
 const Footer = () => {
 
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
+
+    const { homeCategory, homeTag, oldArticle, recentArticle } = useSelector(state => state.home);
 
     useEffect(() => {
-
+        dispatch(home_tag_category_get())
+        dispatch(old_react_article())
     }, [])
 
     return (
@@ -21,24 +27,24 @@ const Footer = () => {
                                 <h3>Old Artical</h3>
                             </div>
                             {
-                                [1, 2, 3].map(() => (
-                                    <div className="some-recent-artical">
+                                oldArticle.length > 0 && oldArticle?.map((art, index) =>
+                                    <div key={index} className="some-recent-artical">
                                         <div className="row">
                                             <div className="col-4">
                                                 <div className="img">
-                                                    <img src={`http://localhost:3000/articalImage/1652292899080image5.jpeg`} alt="articalImage" />
+                                                    <img src={art.image} alt="img" />
                                                 </div>
                                             </div>
                                             <div className="col-8">
                                                 <div className="title-link">
-                                                    <Link to='/artical/details/sdfhgs'>Title</Link>
+                                                    <Link to={`/artical/details/${art.slug}`}>{art.title}</Link>
                                                     <br />
-                                                    <span>2 jun 2020</span>
+                                                    <span>{moment(art.createdAt).fromNow()}</span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                ))
+                                )
                             }
                         </div>
                         <div className="col-4">
@@ -50,13 +56,13 @@ const Footer = () => {
                                     <div className="cate">
                                         <ul className="cate-list">
                                             {
-                                                [1, 2, 3].map(() => (
-                                                    <div className="cate-item">
+                                                homeCategory.length > 0 && homeCategory?.map((cate, index) =>
+                                                    <div key={index} className="cate-item">
 
-                                                        <li><FaChevronRight /><Link to='/artical/category/algorithom'>123456</Link></li>
-                                                        <span>(10)</span>
+                                                        <li><FaChevronRight /><Link to='/artical/category/algorithom'>{cate._id}</Link></li>
+                                                        <span>({cate.count})</span>
                                                     </div>
-                                                ))
+                                                )
                                             }
                                         </ul>
                                     </div>
@@ -65,14 +71,9 @@ const Footer = () => {
                                             <h3>Tag</h3>
                                         </div>
                                         <ul className="tag-list">
-                                            {/* {
-                                                allTag.length > 0 && allTag.map((tag, index) => <li className='tag-item' key={index}><Link to='/artical/tag/programming'>{tag}</Link></li>
+                                            {
+                                                homeTag.length > 0 && homeTag?.map((tag, index) => <li className='tag-item' key={index}><Link to={`/artical/tag/${tag.split(' ').join('-')}`}>{tag}</Link></li>
                                                 )
-                                            } */
-
-                                                [1, 2, 3, 4, 5, 6, 7, 8, 9].map((tag, index) => (
-                                                    <li className='tag-item' key={index}><Link to='/artical/tag/programming'>Tag</Link></li>
-                                                ))
                                             }
 
                                         </ul>
@@ -85,24 +86,25 @@ const Footer = () => {
                                 <h3>Recent Recipse</h3>
                             </div>
                             {
-                                [1, 2, 3].map(() => (
-                                    <div className="some-recent-artical">
+                                recentArticle.length > 0 && recentArticle?.map((art, index) =>
+                                    <div key={index} className="some-recent-artical">
                                         <div className="row">
                                             <div className="col-4">
                                                 <div className="img">
-                                                    <img src={`http://localhost:3000/articalImage/1654439845219room-12.jpeg`} alt="articalImage" />
+                                                    <img src={art.image} alt="img" />
                                                 </div>
                                             </div>
                                             <div className="col-8">
                                                 <div className="title-link">
-                                                    <Link to='/artical/details/sdfhgs'>Title</Link>
+                                                    <Link to={`/artical/details/${art.slug}`}>{art.title}</Link>
                                                     <br />
-                                                    <span>2 jun 2020</span>
+                                                    <span>{moment(art.createdAt).fromNow()}</span>
+
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                ))
+                                )
                             }
                         </div>
                     </div>

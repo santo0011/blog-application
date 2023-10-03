@@ -64,9 +64,9 @@ class articalController {
     // get_artical
     get_artical = async (req, res) => {
         const { role, adminId } = req;
-
         const { searchValue, page, parPage } = req.query;
         const skipPage = parseInt(parPage) * (parseInt(page) - 1);
+
 
         let articals = [];
 

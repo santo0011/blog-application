@@ -6,7 +6,9 @@ import { AiFillTag, AiFillDislike, AiFillLike } from "react-icons/ai";
 import { FaFacebookSquare, FaTwitterSquare, FaGithubSquare } from "react-icons/fa";
 import { ImLinkedin } from "react-icons/im";
 import Comments from './Comments';
-// import htmlParser from 'react-html-parser';
+import htmlParser from 'react-html-parser';
+
+
 
 const ArticalDetails = () => {
     return (

@@ -5,19 +5,18 @@ import Navbar from './Navbar';
 import { useSelector, useDispatch } from 'react-redux';
 import PopularArtical from './PopularArtical';
 import { Link, Outlet } from 'react-router-dom';
-
 import CreateAt from './CreateAt';
-import HomeArtical from './HomeArtical';
-import ArticalDetails from './ArticalDetails';
-import CategoryArtical from './CategoryArtical';
-import TagArtical from './TagArtical';
 import Footer from './Footer';
+import HomeArtical from './HomeArtical';
+import { home_tag_category_get } from '../../store/Reducers/homeReducer';
 
 
 const Home = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const params = useParams();
+
+    const { homeCategory, homeTag } = useSelector(state => state.home);
 
     const [value, setvalue] = useState('');
     const nav = useRef();
@@ -27,11 +26,13 @@ const Home = () => {
         navigate(`/artical/search/${value}`)
     }
 
-
     const scrollTop = () => {
         nav.current?.scrollIntoView({ behavior: 'smooth' });
     }
 
+    useEffect(() => {
+        dispatch(home_tag_category_get())
+    }, [])
 
     return (
         <div className='home'>
@@ -41,6 +42,7 @@ const Home = () => {
                     <div className="row">
                         <div className="col-8">
                             <Outlet />
+                            <HomeArtical />
                         </div>
                         <div className="col-4">
                             <div className="search-category-tag">
@@ -76,23 +78,13 @@ const Home = () => {
                                         <h3>Category</h3>
                                     </div>
                                     <ul className="cate-list">
-                                        {/* {
-                                            allCategory.length > 0 && allCategory.map((cate, index) =>
+                                        {
+                                            homeCategory.length > 0 && homeCategory?.map((cate, index) =>
                                                 <div key={index} className="cate-item">
-
                                                     <li><FaChevronRight /><Link to={`/artical/category/${cate._id.split(' ').join('-')}`}>{cate._id}</Link></li>
                                                     <span>({cate.count})</span>
                                                 </div>
                                             )
-                                        } */}
-
-                                        {
-                                            [1, 2, 3, 4].map(() => (
-                                                <div className="cate-item">
-                                                    <li><FaChevronRight /><Link to="/artical/category/biswas">Algorithom</Link></li>
-                                                    <span>(123456)</span>
-                                                </div>
-                                            ))
                                         }
 
                                     </ul>
@@ -103,9 +95,8 @@ const Home = () => {
                                     </div>
                                     <ul>
                                         {
-                                            [1, 2, 3, 4, 5].map(() => (
-                                                <li key={1}><Link to="/artical/tag/santo">Programming</Link></li>
-                                            ))
+                                            homeTag.length > 0 && homeTag?.map((tag, index) => <li key={index}><Link to={`/artical/tag/${tag.split(' ').join('-')}`}>{tag}</Link></li>
+                                            )
                                         }
 
                                     </ul>

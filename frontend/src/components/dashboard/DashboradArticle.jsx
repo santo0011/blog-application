@@ -10,6 +10,7 @@ import { delete_article, get_all_article, messageClear } from '../../store/Reduc
 import Pagination from '../home/Pagination';
 import { base_url } from '../../api/api';
 import htmlToText from "react-html-parser";
+import { confirmMessagge, showSuccessMessage } from '../../utils/aleartFunc';
 
 
 const DashboradArticle = () => {
@@ -33,9 +34,16 @@ const DashboradArticle = () => {
     }, [searchValue, currentPage, parPage])
 
 
+    // delete_tag_func
+    const delete_tag_func = async (id) => {
+        const returnValue = await confirmMessagge();
+        if (returnValue) {
+            dispatch(delete_article(id))
+        }
+    }
+
 
     useEffect(() => {
-
         const obj = {
             parPage: '',
             page: '',
@@ -43,7 +51,7 @@ const DashboradArticle = () => {
         }
 
         if (successMessage) {
-            toast.success(successMessage)
+            showSuccessMessage(successMessage)
             dispatch(messageClear());
             dispatch(get_all_article(obj))
         }
@@ -91,7 +99,7 @@ const DashboradArticle = () => {
                                             {/* <Link to={`/artical/details/${art.slug}`}><FaRegEye /></Link> */}
                                             <Link><FaRegEye /></Link>
                                         </span>
-                                        <span onClick={() => dispatch(delete_article(art._id))}><MdDelete /></span>
+                                        <span onClick={() => delete_tag_func(art._id)}><MdDelete /></span>
                                     </div>
                                 </div>
                             ) : 'Article not found...'

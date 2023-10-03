@@ -79,7 +79,7 @@ export const tagReducer = createSlice({
         successMessage: '',
         allTag: [],
         tagCount: 0,
-        editTag: {}
+        editTag: {},
     },
     reducers: {
         messageClear: (state, _) => {

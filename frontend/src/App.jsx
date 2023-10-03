@@ -51,7 +51,7 @@ const App = () => {
         <Route path='/login' element={<Login />} />
 
         <Route path='/' element={<Home />} >
-          <Route path='/:homeCurrentPage?' element={<HomeArtical />} />
+          <Route path='artical/:currentPage?' element={<HomeArtical />} />
           <Route path='artical/details/:slug' element={<ArticalDetails />} />
           <Route path='artical/category/:categorySlug/:currentPage?' element={<CategoryArtical />} />
           <Route path='artical/tag/:tagSlug/:currentPage?' element={<TagArtical />} />

@@ -81,7 +81,7 @@ export const categoryReducer = createSlice({
         successMessage: '',
         allCategory: [],
         categoryCount: 0,
-        editCategory: {}
+        editCategory: {},
     },
     reducers: {
         messageClear: (state, _) => {

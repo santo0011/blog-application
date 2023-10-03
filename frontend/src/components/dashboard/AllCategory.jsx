@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from 'react-redux';
 import { delete_category, get_all_category, messageClear } from '../../store/Reducers/categoryReducer';
 import Pagination from '../home/Pagination';
+import { confirmMessagge, showSuccessMessage } from '../../utils/aleartFunc';
 
 
 const AllCategory = () => {
@@ -32,6 +33,15 @@ const AllCategory = () => {
     }, [searchValue, currentPage, parPage])
 
 
+    // delete_category_func
+    const delete_category_func = async (id) => {
+        const returnValue = await confirmMessagge();
+        if (returnValue) {
+            dispatch(delete_category(id))
+        }
+    }
+
+
     useEffect(() => {
         const obj = {
             parPage: '',
@@ -40,7 +50,7 @@ const AllCategory = () => {
         }
 
         if (successMessage) {
-            toast.success(successMessage)
+            showSuccessMessage(successMessage)
             dispatch(messageClear());
             dispatch(get_all_category(obj))
         }
@@ -75,7 +85,7 @@ const AllCategory = () => {
                                 <div className="name">{c.categoryName}</div>
                                 <div className="action">
                                     <span><Link to={`/dashboard/category/edit/${c.categorySlug}`}><MdEdit /></Link></span>
-                                    <span onClick={() => dispatch(delete_category(c._id))}><MdDelete /></span>
+                                    <span onClick={() => delete_category_func(c._id)}><MdDelete /></span>
                                 </div>
                             </div>)
                         }

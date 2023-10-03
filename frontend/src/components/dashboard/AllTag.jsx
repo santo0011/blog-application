@@ -8,6 +8,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { useDispatch, useSelector } from 'react-redux';
 import { delete_tag, get_tag, messageClear } from '../../store/Reducers/tagReducer';
 import Pagination from '../home/Pagination';
+import { confirmMessagge, showSuccessMessage } from '../../utils/aleartFunc';
 
 
 const AllTag = () => {
@@ -31,6 +32,15 @@ const AllTag = () => {
     }, [searchValue, currentPage, parPage])
 
 
+    // delete_tag_func
+    const delete_tag_func = async (id) => {
+        const returnValue = await confirmMessagge();
+        if (returnValue) {
+            dispatch(delete_tag(id))
+        }
+    }
+
+
     useEffect(() => {
         const obj = {
             parPage: '',
@@ -39,7 +49,7 @@ const AllTag = () => {
         }
 
         if (successMessage) {
-            toast.success(successMessage)
+            showSuccessMessage(successMessage)
             dispatch(messageClear());
             dispatch(get_tag(obj))
         }
@@ -75,7 +85,7 @@ const AllTag = () => {
                                 <div className="name">{c.tagName}</div>
                                 <div className="action">
                                     <span><Link to={`/dashboard/tag/edit/${c.tagSlug}`}><MdEdit /></Link></span>
-                                    <span onClick={() => dispatch(delete_tag(c._id))}><MdDelete /></span>
+                                    <span onClick={() => delete_tag_func(c._id)}><MdDelete /></span>
                                 </div>
                             </div>)
                         }
@@ -86,14 +96,13 @@ const AllTag = () => {
                         <Pagination
                             pageNumber={currentPage}
                             setPageNumber={setCurrentPage}
-                            totalItem={50}
+                            totalItem={tagCount}
                             parPage={parPage}
                             showItem={Math.floor(tagCount / parPage)}
                         /> : ''
                 }
 
             </div>
-
 
         </div>
     )

@@ -1,25 +1,57 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Article from './Article';
+import { useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import Pagination from './Pagination';
+import { home_article_get } from '../../store/Reducers/homeReducer';
 
 const HomeArtical = () => {
 
-    let currentPage = 1;
-    let parPage = 10;
-    let countArticle = 10;
+    const dispatch = useDispatch();
+    // const { currentPage } = useParams();
+
+    const { homeArticle, countArticle } = useSelector(state => state.home);
+
+    const [searchValue, setSearchValue] = useState('');
+    const [currentPage, setCurrentPage] = useState(1)
+    const [parPage, setParPage] = useState(3)
+
+
+    useEffect(() => {
+        const obj = {
+            parPage: parseInt(parPage),
+            page: parseInt(currentPage),
+            searchValue
+        }
+        dispatch(home_article_get(obj))
+    }, [searchValue, currentPage, parPage])
 
     return (
         <>
             <div className='home-articals'>
-                <Article />
+                {
+                    homeArticle.length > 0 ? homeArticle.map((art, index) =>
+                        <Article key={index} art={art} />
+                    ) : <h3>Article not found</h3>
+                }
+
             </div>
-            <Pagination
-                pageNumber={currentPage}
-                parPage={parPage}
-                itemCount={countArticle}
-                path='/article'
-            />
+
+            <br />
+
+            {
+                countArticle >= parPage ?
+                    <Pagination
+                        pageNumber={currentPage}
+                        setPageNumber={setCurrentPage}
+                        totalItem={countArticle}
+                        parPage={parPage}
+                        showItem={Math.floor(countArticle / parPage)}
+                    /> : ''
+            }
+
         </>
+
     )
 }
 

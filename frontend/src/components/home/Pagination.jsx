@@ -3,13 +3,6 @@ import { BsChevronDoubleLeft, BsChevronDoubleRight } from 'react-icons/bs';
 
 const Pagination = ({ pageNumber, setPageNumber, totalItem, parPage, showItem }) => {
 
-    // console.log('pageNumber', pageNumber)
-    // console.log('setPageNumber', setPageNumber)
-    // console.log('totalItem', totalItem)
-    // console.log('parPage', parPage)
-    // console.log('showItem', showItem)
-
-
     const paginationBtn = {
         background: '#878787',
         color: '#fff',
