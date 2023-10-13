@@ -42,7 +42,7 @@ const Home = () => {
                     <div className="row">
                         <div className="col-8">
                             <Outlet />
-                            <HomeArtical />
+                            {/* <HomeArtical /> */}
                         </div>
                         <div className="col-4">
                             <div className="search-category-tag">

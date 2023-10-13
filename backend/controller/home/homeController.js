@@ -67,6 +67,7 @@ class homeController {
         }
     }
 
+
     // old_react_article
     old_react_article = async (req, res) => {
         try {
@@ -94,6 +95,50 @@ class homeController {
         }
     }
 
+
+    // category_article_get
+    category_article_get = async (req, res) => {
+        const { categorySlug, page, parPage } = req.query;
+        const skipPage = parseInt(parPage) * (parseInt(page) - 1);
+
+        try {
+            const countArticle = await articleModel.find({ category_slug: categorySlug }).countDocuments();
+            const homeArticle = await articleModel.find({ category_slug: categorySlug }).skip(skipPage).limit(parPage).sort({ createAt: -1 })
+            responseReturn(res, 200, {
+                countArticle,
+                homeArticle
+            });
+
+        } catch (error) {
+            console.log(error.mesasge)
+        }
+    }
+
+    // tag_article_get
+    tag_article_get = async (req, res) => {
+        const { tagSlug, page, parPage } = req.query;
+        const skipPage = parseInt(parPage) * (parseInt(page) - 1);
+
+        try {
+            const countArticle = await articleModel.find({ tag_slug: tagSlug }).countDocuments();
+            const homeArticle = await articleModel.find({ tag_slug: tagSlug }).skip(skipPage).limit(parPage).sort({ createAt: -1 })
+
+            console.log(homeArticle)
+
+            responseReturn(res, 200, {
+                countArticle,
+                homeArticle
+            });
+
+        } catch (error) {
+            console.log(error.mesasge)
+        }
+    }
+
+
+
+
 }
+
 
 module.exports = new homeController();

@@ -40,4 +40,5 @@ const Article = ({ key, art }) => {
     )
 }
 
+
 export default Article;

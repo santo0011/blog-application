@@ -43,6 +43,8 @@ const App = () => {
     dispatch(get_tag(obj));
   }, [dispatch]);
 
+
+
   return (
     <>
       <Routes>
@@ -51,10 +53,11 @@ const App = () => {
         <Route path='/login' element={<Login />} />
 
         <Route path='/' element={<Home />} >
-          <Route path='artical/:currentPage?' element={<HomeArtical />} />
+          <Route path='' element={<HomeArtical />} />
+          <Route path='artical' element={<HomeArtical />} />
           <Route path='artical/details/:slug' element={<ArticalDetails />} />
-          <Route path='artical/category/:categorySlug/:currentPage?' element={<CategoryArtical />} />
-          <Route path='artical/tag/:tagSlug/:currentPage?' element={<TagArtical />} />
+          <Route path='artical/category/:categorySlug' element={<CategoryArtical />} />
+          <Route path='artical/tag/:tagSlug' element={<TagArtical />} />
           <Route path='artical/search/:searchValue' element={<HomeArtical />} />
         </Route>
 

@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../api/api';
 import jwt from 'jwt-decode';
 
+
 // home_article_get
 export const home_article_get = createAsyncThunk(
     'home/home_article_get',
@@ -14,6 +15,8 @@ export const home_article_get = createAsyncThunk(
         }
     }
 )
+
+
 
 // home_tag_category_get
 export const home_tag_category_get = createAsyncThunk(
@@ -42,6 +45,33 @@ export const old_react_article = createAsyncThunk(
     }
 )
 
+
+
+// get_category_article
+export const get_category_article = createAsyncThunk(
+    'home/get_category_article',
+    async ({ page, parPage, categorySlug }, { rejectWithValue, fulfillWithValue }) => {
+        try {
+            const { data } = await api.get(`/category-article-get?page=${page}&&parPage=${parPage}&&categorySlug=${categorySlug}`);
+            return fulfillWithValue(data)
+        } catch (error) {
+            return rejectWithValue(error.response.data)
+        }
+    }
+)
+
+// get_tag_article
+export const get_tag_article = createAsyncThunk(
+    'home/get_tag_article',
+    async ({ page, parPage, tagSlug }, { rejectWithValue, fulfillWithValue }) => {
+        try {
+            const { data } = await api.get(`/tag-article-get?page=${page}&&parPage=${parPage}&&tagSlug=${tagSlug}`);
+            return fulfillWithValue(data)
+        } catch (error) {
+            return rejectWithValue(error.response.data)
+        }
+    }
+)
 
 
 export const homeReducer = createSlice({
@@ -83,6 +113,22 @@ export const homeReducer = createSlice({
         [old_react_article.fulfilled]: (state, { payload }) => {
             state.oldArticle = payload.oldArticle
             state.recentArticle = payload.recentArticle
+        },
+        [get_category_article.pending]: (state, _) => {
+            state.loader = true
+        },
+        [get_category_article.fulfilled]: (state, { payload }) => {
+            state.loader = false
+            state.countArticle = payload.countArticle
+            state.homeArticle = payload.homeArticle
+        },
+        [get_tag_article.pending]: (state, _) => {
+            state.loader = true
+        },
+        [get_tag_article.fulfilled]: (state, { payload }) => {
+            state.loader = false
+            state.countArticle = payload.countArticle
+            state.homeArticle = payload.homeArticle
         },
     }
 });

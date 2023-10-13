@@ -17,6 +17,8 @@ const Footer = () => {
         dispatch(old_react_article())
     }, [])
 
+
+
     return (
         <section id="footer">
             <div className="footer">
@@ -59,7 +61,7 @@ const Footer = () => {
                                                 homeCategory.length > 0 && homeCategory?.map((cate, index) =>
                                                     <div key={index} className="cate-item">
 
-                                                        <li><FaChevronRight /><Link to='/artical/category/algorithom'>{cate._id}</Link></li>
+                                                        <li><FaChevronRight /><Link to={`/artical/category/${cate._id.split(' ').join('-')}`}>{cate._id}</Link></li>
                                                         <span>({cate.count})</span>
                                                     </div>
                                                 )
@@ -113,6 +115,5 @@ const Footer = () => {
         </section>
     )
 };
-
 
 export default Footer;

@@ -9,6 +9,8 @@ const HomeArtical = () => {
 
     const dispatch = useDispatch();
     // const { currentPage } = useParams();
+    // const { searchValue } = useParams();
+
 
     const { homeArticle, countArticle } = useSelector(state => state.home);
 
