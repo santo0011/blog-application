@@ -7,38 +7,68 @@ import { FaFacebookSquare, FaTwitterSquare, FaGithubSquare } from "react-icons/f
 import { ImLinkedin } from "react-icons/im";
 import Comments from './Comments';
 import htmlParser from 'react-html-parser';
-
+import moment from 'moment';
+import { get_article_details } from '../../store/Reducers/homeReducer';
+import { user_article_like } from '../../store/Reducers/dislikelikeReducer';
 
 
 const ArticalDetails = () => {
+
+    const { slug } = useParams();
+    const dispatch = useDispatch();
+
+    const { related_article, readMore, read_article, moreTag } = useSelector(state => state.home);
+    const { userInfo } = useSelector((state) => state.auth);
+
+    console.log(userInfo)
+
+    const like_status = "";
+    const dislike_status = "";
+
+    // article_like
+    const article_like = (e) => {
+        e.preventDefault();
+        const obj = {
+            articleId: read_article._id,
+            like_status,
+            dislike_status,
+            adminId: read_article.adminId
+        }
+
+        dispatch(user_article_like(obj))
+    }
+
+    useEffect(() => {
+        dispatch(get_article_details(slug))
+    }, [slug])
+
+
     return (
         <div className="article-details">
             <div className="path">
                 <Link to='/'>Home</Link>
                 <span className='arrow'><BsChevronRight /></span>
-                <Link to={`/artical/category/santo`}>Algorithom</Link>
+                <Link to={`/artical/category/${read_article?.category}`}>{read_article?.category}</Link>
                 <span className='arrow'><BsChevronRight /></span>
-                <span>Why Is The Invention Of The Atomic Bomb A Quintessence Of Scientific Triumph?</span>
+                <span>{read_article?.title}</span>
             </div>
             <div className="title">
-                <h3><Link to="#">Why Is The Invention Of The Atomic Bomb A Quintessence Of Scientific Triumph?</Link></h3>
+                <h3><Link to="#">{read_article?.title}</Link></h3>
             </div>
             <div className="auth-time">
                 <div className="auth">
                     <h4><AiFillTag /></h4>
-                    <span><Link to={`/artical/tag/santo`}>Programming</Link></span>
+                    <Link to={`/artical/category/${read_article?.category_slug}`}>{read_article?.category}</Link>
                 </div>
                 <div className="time">
-                    <span>2 jun 2020</span>
+                    <span>{moment(read_article.createdAt).fromNow()}</span>
                 </div>
             </div>
             <div className="home-artical-image">
-                <img src={`http://localhost:3000/articalImage/1654439845219room-12.jpeg`} alt="img" />
-
+                <img src={`${read_article?.image}`} alt="img" />
             </div>
             <div className="home-artical-text">
-                {/* <p>{htmlParser('A quick brown fox jumps upon right over the lazy dog.')}</p> */}
-                <p>Science For Everyone: This week, in ABP Live's science column, we explain how the development of the atomic bomb shaped scientific discoveries over the years, and why it is a huge scientific triumph.Science For Everyone: This week, in ABP Live's science column, we explain how the development of the atomic bomb shaped scientific discoveries over the years, and why it is a huge scientific triumph.Science For Everyone: This week, in ABP Live's science column, we explain how the development of the atomic bomb shaped scientific discoveries over the years, and why it is a huge scientific triumph.</p>
+                <p>{htmlParser(read_article?.articleText)}</p>
             </div>
             <div className="like-dislike-view">
                 <div className="like-dislike">
@@ -47,21 +77,11 @@ const ArticalDetails = () => {
                         <button className='icon'><AiFillDislike /></button>
                     </div>
                     <div className="like">
-                        <button className='icon'><AiFillLike /></button>
-                    </div>
+                        {
+                            userInfo && userInfo.role === 'user' ? <button onClick={article_like} className={like_status === 'like' ? 'icon blue' : 'icon'} ><AiFillLike /></button> : <button disabled className='icon'><AiFillLike /></button>
+                        }
 
-                    {/* <div className="dislike">
-                    {
-                        userInfo && userInfo.role === 'user' ? <button onClick={article_dislike} className={dislike_status === 'dislike' ? 'icon red' : 'icon'} ><AiFillDislike /></button> : <button disabled className='icon'><AiFillDislike /></button>
-                    }
-                    <div className="like-number">({dislike})</div>
-                </div>
-                <div className="like">
-                    {
-                        userInfo && userInfo.role === 'user' ? <button onClick={article_like} className={like_status === 'like' ? 'icon blue' : 'icon'} ><AiFillLike /></button> : <button disabled className='icon'><AiFillLike /></button>
-                    }
-                    <div className="dislike-number">({like})</div>
-                </div> */}
+                    </div>
 
                 </div>
                 <div className="view">
@@ -71,19 +91,14 @@ const ArticalDetails = () => {
             </div>
             <div className="read-more">
                 <span>Read more : </span>
-                {/* <Link to={readMore?.slug}>{readMore?.title}</Link> */}
-                <Link to={'/slug'}>Why Is The Invention Of The Atomic Bomb A Quintessence Of Scientific Triumph?</Link>
+                <Link to={`/artical/details/${readMore?.slug}`}>{readMore?.title}</Link>
             </div>
             <div className="more-tags">
-                <span>Tags</span>{
-                    [1, 2, 3, 4].map(() => (
-                        <Link to={`/artical/tag/santo`}>Computer</Link>
-                    ))
+                <span>Tags</span>
+                {
+                    moreTag.length > 0 && moreTag.map((teg, index) => <Link to={`/artical/tag/${teg}`} key={index}>{teg.split('-').join(' ')}</Link>)
                 }
 
-                {/* {
-                moreTag.length > 0 && moreTag.map((teg, index) => <Link to={`/artical/tag/${teg}`} key={index}>{teg.split('-').join(' ')}</Link>)
-            } */}
             </div>
             <div className="social-icons">
                 <a className='l1' href=""><FaFacebookSquare /></a>
@@ -96,12 +111,12 @@ const ArticalDetails = () => {
                     <h3>Related Articles</h3>
                 </div>
                 <div className="articles">
-                    {/* {
-                    related_article.length > 0 ? related_article.map((art, index) => <Link key={index} to={`/artical/details/${art.slug}`} className='article'>
-                        <img src={`http://localhost:3000/articalImage/${art?.image}`} alt="" />
-                        <span>very popular during the Renaissance. The first line of</span>
-                    </Link>) : <span>Related article not found</span>
-                } */}
+                    {
+                        related_article.length > 0 ? related_article.map((art, index) => <Link key={index} to={`/artical/details/${art.slug}`} className='article'>
+                            <img src={`${art?.image}`} alt="img" />
+                            <span>{art?.title}</span>
+                        </Link>) : <span>Related article not found</span>
+                    }
 
                 </div>
             </div>

@@ -19,3 +19,22 @@ module.exports.admin_middleware = async (req, res, next) => {
     }
 
 }
+
+
+module.exports.auth_user = async (req, res, next) => {
+    const { blog_token } = req.cookies;
+
+    if (!blog_token) {
+        return res.status(409).json({ error: 'Please login first' })
+    } else {
+        const deCodeToken = await jwt.verify(blog_token, process.env.SECRET)
+        if (deCodeToken.role === "user" && deCodeToken.accessStatus === "unblock") {
+            req.userId = deCodeToken.id;
+            req.userName = deCodeToken.name;
+            req.role = deCodeToken.role;
+            next();
+        }
+
+    }
+
+}

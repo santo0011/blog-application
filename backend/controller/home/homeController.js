@@ -137,8 +137,94 @@ class homeController {
 
 
 
+    // get_article_details
+    get_article_details = async (req, res) => {
+        const { articleSlug } = req.params;
+        try {
+            const read_article = await articleModel.findOne({ slug: articleSlug });
+
+            const related_article = await articleModel.aggregate([
+                {
+                    $match: {
+                        $and: [
+                            {
+                                category_slug: {
+                                    $eq: read_article.category_slug
+                                }
+                            },
+                            {
+                                slug: {
+                                    $ne: articleSlug
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    $sample: {
+                        size: 3
+                    }
+                }
+            ]);
+
+            const readMore = await articleModel.aggregate([
+                {
+                    $match: {
+                        $and: [
+                            {
+                                category_slug: {
+                                    $eq: read_article.category_slug
+                                }
+                            },
+                            {
+                                slug: {
+                                    $ne: articleSlug
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    $sample: {
+                        size: 1
+                    }
+                }
+            ]);
+
+            const moreTag = await articleModel.distinct('tag_slug', {
+                tag_slug: {
+                    $ne: read_article.tag_slug
+                }
+            })
+
+
+            responseReturn(res, 200, {
+                read_article,
+                related_article,
+                readMore: {
+                    title: readMore.length > 0 ? readMore[0].title : "",
+                    slug: readMore.length > 0 ? readMore[0].slug : "",
+                },
+                moreTag
+            });
+
+        } catch (error) {
+            console.log(error.mesasge)
+        }
+    }
+
+
+    // user_article_like
+    user_article_like = async (req, res) => {
+        const { userName, userId } = req;
+
+        try {
+
+        } catch (error) {
+            console.log(error.mesasge)
+        }
+    }
 
 }
-
 
 module.exports = new homeController();

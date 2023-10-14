@@ -74,6 +74,20 @@ export const get_tag_article = createAsyncThunk(
 )
 
 
+// get_article_details
+export const get_article_details = createAsyncThunk(
+    'home/get_article_details',
+    async (articleSlug, { rejectWithValue, fulfillWithValue }) => {
+        try {
+            const { data } = await api.get(`/get-article-details/${articleSlug}`);
+            return fulfillWithValue(data)
+        } catch (error) {
+            return rejectWithValue(error.response.data)
+        }
+    }
+)
+
+
 export const homeReducer = createSlice({
     name: "home",
     initialState: {
@@ -86,6 +100,10 @@ export const homeReducer = createSlice({
         homeTag: [],
         oldArticle: [],
         recentArticle: [],
+        related_article: [],
+        readMore: "",
+        read_article: '',
+        moreTag: []
     },
     reducers: {
         messageClear: (state, _) => {
@@ -130,6 +148,12 @@ export const homeReducer = createSlice({
             state.countArticle = payload.countArticle
             state.homeArticle = payload.homeArticle
         },
+        [get_article_details.fulfilled]: (state, { payload }) => {
+            state.related_article = payload.related_article
+            state.readMore = payload.readMore
+            state.read_article = payload.read_article
+            state.moreTag = payload.moreTag
+        }
     }
 });
 
