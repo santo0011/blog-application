@@ -1,5 +1,6 @@
 const { responseReturn } = require('../../utiles/response');
 const articleModel = require('../../models/articleModel');
+const notificationModel = require('../../models/NotificationModel');
 
 
 class homeController {
@@ -29,6 +30,7 @@ class homeController {
             responseReturn(res, 500, { error: "Server error" })
         }
     }
+
 
     // home_tag_category_get
     home_tag_category_get = async (req, res) => {
@@ -214,17 +216,197 @@ class homeController {
     }
 
 
-    // user_article_like
-    user_article_like = async (req, res) => {
-        const { userName, userId } = req;
 
+    // like_dislike_get
+    like_dislike_get = async (req, res) => {
+        const { articleSlug } = req.params;
+        const { userId } = req;
         try {
+            const get = await articleModel.findOne({ slug: articleSlug }).select({ like: 1, dislike: 1, like_dislike: 1 });
+            const check_user = await get.like_dislike.find(u => u.like_disliker_id === userId);
+
+            if (check_user) {
+                if (check_user.like_or_dislike === "like") {
+                    responseReturn(res, 201, {
+                        like_status: "like",
+                        dislike_status: "",
+                        like: get.like,
+                        dislike: get.dislike
+                    })
+                } else {
+                    responseReturn(res, 201, {
+                        like_status: "",
+                        dislike_status: "dislike",
+                        like: get.like,
+                        dislike: get.dislike
+                    })
+                }
+
+            } else {
+                responseReturn(res, 201, {
+                    like_status: "",
+                    dislike_status: "",
+                    like: get.like,
+                    dislike: get.dislike
+                })
+            }
 
         } catch (error) {
             console.log(error.mesasge)
         }
     }
 
+
+
+    // user_article_like
+    user_article_like = async (req, res) => {
+        const { articleId, like_status, dislike_status, adminId } = req.body
+        const { userName, userId } = req;
+
+        try {
+            const { like, slug, dislike } = await articleModel.findOne({ _id: articleId });
+            if (!like_status && !dislike_status) {
+                await articleModel.updateOne({ _id: articleId }, {
+                    like: like + 1,
+                    $push: {
+                        like_dislike: {
+                            like_or_dislike: "like",
+                            like_disliker_id: userId
+                        }
+                    }
+                }, { new: true });
+
+                await notificationModel.create({
+                    subject: `${userName} like your article`,
+                    slug,
+                    adminId
+                });
+
+                responseReturn(res, 200, { message: "You like this article" })
+
+            } else if (like_status && !dislike_status) {
+
+                await articleModel.updateOne({ _id: articleId }, {
+                    like: like - 1,
+                    $pull: {
+                        like_dislike: {
+                            like_disliker_id: userId
+                        }
+                    }
+                });
+
+                await notificationModel.create({
+                    subject: `${userName} like remove your article`,
+                    slug,
+                    adminId
+                });
+                responseReturn(res, 200, { message: "Undo like" })
+            } else if (!like_status && dislike_status) {
+
+                await articleModel.updateOne(
+                    {
+                        _id: articleId,
+                        'like_dislike.like_disliker_id': userId
+                    }, {
+                    like: like + 1,
+                    dislike: dislike - 1,
+                    $set: {
+                        'like_dislike.$.like_or_dislike': 'like'
+                    }
+                }
+                );
+
+                await notificationModel.create({
+                    subject: `${userName} like your article`,
+                    slug,
+                    adminId
+                });
+
+                responseReturn(res, 200, { message: "You like this article" })
+
+            }
+
+        } catch (error) {
+            console.log(error.mesasge)
+        }
+    }
+
+
+    // user_article_dislike
+    user_article_dislike = async (req, res) => {
+        const { articleId, like_status, dislike_status, adminId } = req.body
+        const { userName, userId } = req;
+
+        try {
+
+            const { like, slug, dislike } = await articleModel.findOne({ _id: articleId });
+            if (!like_status && !dislike_status) {
+                await articleModel.updateOne({ _id: articleId }, {
+                    dislike: dislike + 1,
+                    $push: {
+                        like_dislike: {
+                            like_or_dislike: "dislike",
+                            like_disliker_id: userId
+                        }
+                    }
+                }, { new: true });
+
+                await notificationModel.create({
+                    subject: `${userName} dislike your article`,
+                    slug,
+                    adminId
+                });
+
+                responseReturn(res, 200, { message: "You dislike this article" })
+
+            } else if (!like_status && dislike_status) {
+
+                await articleModel.updateOne({ _id: articleId }, {
+                    dislike: dislike - 1,
+                    $pull: {
+                        like_dislike: {
+                            like_disliker_id: userId
+                        }
+                    }
+                });
+
+                await notificationModel.create({
+                    subject: `${userName} dislike remove your article`,
+                    slug,
+                    adminId
+                });
+                responseReturn(res, 200, { message: "Undo dislike" })
+            } else if (like_status && !dislike_status) {
+
+                await articleModel.updateOne(
+                    {
+                        _id: articleId,
+                        'like_dislike.like_disliker_id': userId
+                    }, {
+                    dislike: dislike + 1,
+                    like: like - 1,
+                    $set: {
+                        'like_dislike.$.like_or_dislike': 'dislike'
+                    }
+                }
+                );
+
+                await notificationModel.create({
+                    subject: `${userName} dislike your article`,
+                    slug,
+                    adminId
+                });
+
+                responseReturn(res, 200, { message: "You dislike this article" })
+            }
+
+        } catch (error) {
+            console.log(error.mesasge)
+        }
+
+    }
+
 }
+
 
 module.exports = new homeController();

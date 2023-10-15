@@ -8,8 +8,9 @@ import { ImLinkedin } from "react-icons/im";
 import Comments from './Comments';
 import htmlParser from 'react-html-parser';
 import moment from 'moment';
+import toast from "react-hot-toast";
 import { get_article_details } from '../../store/Reducers/homeReducer';
-import { user_article_like } from '../../store/Reducers/dislikelikeReducer';
+import { like_dislike_get, user_article_dislike, user_article_like } from '../../store/Reducers/dislikelikeReducer';
 
 
 const ArticalDetails = () => {
@@ -18,12 +19,11 @@ const ArticalDetails = () => {
     const dispatch = useDispatch();
 
     const { related_article, readMore, read_article, moreTag } = useSelector(state => state.home);
+    const { like, dislike, like_status, dislike_status, successMessage } = useSelector(state => state.dilikelike);
     const { userInfo } = useSelector((state) => state.auth);
 
-    console.log(userInfo)
 
-    const like_status = "";
-    const dislike_status = "";
+    // console.log(like, dislike, like_status, dislike_status)
 
     // article_like
     const article_like = (e) => {
@@ -38,8 +38,36 @@ const ArticalDetails = () => {
         dispatch(user_article_like(obj))
     }
 
+
+    // article_dislike
+    const article_dislike = (e) => {
+        e.preventDefault();
+        const obj = {
+            articleId: read_article._id,
+            like_status,
+            dislike_status,
+            adminId: read_article.adminId
+        }
+        dispatch(user_article_dislike(obj))
+    }
+
+
+    useEffect(() => {
+
+        if (successMessage) {
+            toast.success(successMessage);
+            dispatch(like_dislike_get(slug))
+        }
+
+    }, [successMessage])
+
+
     useEffect(() => {
         dispatch(get_article_details(slug))
+    }, [slug])
+
+    useEffect(() => {
+        dispatch(like_dislike_get(slug))
     }, [slug])
 
 
@@ -74,15 +102,18 @@ const ArticalDetails = () => {
                 <div className="like-dislike">
 
                     <div className="dislike">
-                        <button className='icon'><AiFillDislike /></button>
+                        {
+                            userInfo && userInfo.role === 'user' ? <button onClick={article_dislike} className={dislike_status === 'dislike' ? 'icon red' : 'icon'} ><AiFillDislike /></button> : <button disabled className='icon'><AiFillDislike /></button>
+                        }
+                        <div className="like-number">({dislike})</div>
                     </div>
                     <div className="like">
                         {
                             userInfo && userInfo.role === 'user' ? <button onClick={article_like} className={like_status === 'like' ? 'icon blue' : 'icon'} ><AiFillLike /></button> : <button disabled className='icon'><AiFillLike /></button>
                         }
+                        <div className="dislike-number">({like})</div>
 
                     </div>
-
                 </div>
                 <div className="view">
                     <span>211</span>

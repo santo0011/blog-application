@@ -41,7 +41,28 @@ const articleSchema = new Schema({
     image: {
         type: String,
         required: true
-    }
+    },
+    like: {
+        type: Number,
+        default: 0
+    },
+    dislike: {
+        type: Number,
+        default: 0
+    },
+    like_dislike: [
+        {
+            like_disliker_id: {
+                type: String
+            },
+            like_or_dislike: {
+                type: String,
+                default: ''
+            }
+        }
+    ]
+
 }, { timestamps: true });
+
 
 module.exports = model('article', articleSchema);
